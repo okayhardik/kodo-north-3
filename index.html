@@ -21,7 +21,7 @@
       overflow-x: hidden;
     }
 
-    /* premium noise texture overlay (matte paper feel) */
+    /* premium noise texture (matte paper feel) */
     .noise-subtle {
       position: fixed;
       top: 0;
@@ -37,7 +37,6 @@
       background-size: 260px;
     }
 
-    /* container */
     .container {
       max-width: 1280px;
       margin: 0 auto;
@@ -50,7 +49,6 @@
       }
     }
 
-    /* typography */
     h1, h2, h3 {
       font-weight: 600;
       letter-spacing: -0.02em;
@@ -69,10 +67,10 @@
       backdrop-filter: blur(4px);
     }
 
-    /* buttons */
+    /* BUTTONS — FIXED WHITE TEXT FOR DARK BUTTON */
     .btn-dark {
       background: #0A0F16;
-      color: white;
+      color: white !important;        /* explicit white for text */
       border: none;
       padding: 12px 28px;
       border-radius: 40px;
@@ -87,7 +85,9 @@
       background: #262F3D;
       transform: translateY(-2px);
       box-shadow: 0 12px 20px -10px rgba(0,0,0,0.15);
+      color: white !important;
     }
+
     .btn-outline-gold {
       background: transparent;
       border: 1px solid #D4C3A3;
@@ -115,7 +115,7 @@
       color: #D4C3A3;
     }
 
-    /* glass card base */
+    /* glass card */
     .glass-card {
       background: rgba(255,255,255,0.96);
       backdrop-filter: blur(8px);
@@ -129,7 +129,7 @@
       box-shadow: 0 24px 48px -12px rgba(212,195,163,0.12), 0 0 0 1px rgba(212,195,163,0.1);
     }
 
-    /* nav */
+    /* navigation */
     .nav-premium {
       backdrop-filter: blur(20px);
       background: rgba(255,255,255,0.75);
@@ -169,6 +169,11 @@
     .nav-links a:hover {
       color: #D4C3A3;
     }
+    /* ensure any link inside btn-dark also stays white */
+    .nav-links .btn-dark,
+    .btn-dark {
+      color: white !important;
+    }
     @media (max-width: 780px) {
       .nav-links { display: none; }
       .mobile-menu { display: block; }
@@ -186,7 +191,6 @@
       transform: translateY(0);
     }
 
-    /* hero floating orbs */
     .hero-orb {
       position: absolute;
       border-radius: 50%;
@@ -202,14 +206,12 @@
       right: -20%;
     }
 
-    /* metrics row */
     .metric-divider {
       width: 1px;
       height: 40px;
       background: rgba(212,195,163,0.4);
     }
 
-    /* bento premium grid */
     .bento-premium {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
@@ -233,7 +235,6 @@
       .span-2 { grid-column: span 1; }
     }
 
-    /* scroll story */
     .scroll-story {
       display: flex;
       gap: 60px;
@@ -271,7 +272,6 @@
       color: #B0B9C4;
     }
 
-    /* testimonial premium track */
     .testi-track {
       display: flex;
       gap: 28px;
@@ -293,7 +293,6 @@
       .testi-card { flex: 0 0 280px; }
     }
 
-    /* dark trust section */
     .trust-dark {
       background: #0A0F16;
       border-radius: 48px;
@@ -327,14 +326,15 @@
       <a href="#">Intelligence</a>
       <a href="#">Enterprises</a>
       <a href="#">Insights</a>
-      <a href="#" class="btn-outline-gold" style="padding: 8px 22px;">Request demo</a>
+      <!-- Request demo button with explicit white text (class btn-dark ensures white) -->
+      <a href="#" class="btn-dark" style="padding: 8px 22px;">Request demo</a>
     </div>
     <div class="mobile-menu">☰</div>
   </div>
 </nav>
 
 <main>
-  <!-- Hero -->
+  <!-- Hero Section -->
   <section style="position: relative; overflow: hidden; padding: 80px 0 120px;">
     <div class="hero-orb gold-glow"></div>
     <div class="container" style="position: relative; z-index: 2; text-align: center;">
@@ -461,7 +461,7 @@
     </div>
   </div>
 
-  <!-- Testimonials (carousel with subtle scaling) -->
+  <!-- Testimonials carousel -->
   <div class="container" style="margin: 80px auto;">
     <div class="fade-up" style="text-align: center;"><span class="eyebrow">Trusted by the vanguard</span><h2 style="font-size: 2.4rem; margin-top: 16px;">What modern finance leaders say</h2></div>
     <div class="testi-track" id="testiTrack">
@@ -533,7 +533,7 @@
   window.addEventListener('scroll', updateSteps);
   updateSteps();
 
-  // testimonial center scaling effect (luxury touch)
+  // testimonial center scaling
   const trackEl = document.getElementById('testiTrack');
   const updateScale = () => {
     const cards = document.querySelectorAll('.testi-card');
@@ -556,7 +556,7 @@
   updateScale();
 
   // mobile menu placeholder
-  document.querySelector('.mobile-menu')?.addEventListener('click', () => alert('Full navigation — Kodo North: premium treasury platform.'));
+  document.querySelector('.mobile-menu')?.addEventListener('click', () => alert('Kodo North — full navigation available. Request demo for early access.'));
 </script>
 </body>
 </html>
