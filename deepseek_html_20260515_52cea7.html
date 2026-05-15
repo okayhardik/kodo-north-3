@@ -1,0 +1,562 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>Kodo North — Silent Treasury Intelligence</title>
+  <!-- Cabinet Grotesk (variable) from Fontshare -->
+  <link href="https://api.fontshare.com/v2/css?f[]=cabinet-grotesk@800,700,500,400&display=swap" rel="stylesheet">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      background: #FFFFFF;
+      font-family: 'Cabinet Grotesk', 'Inter', system-ui, -apple-system, sans-serif;
+      color: #0A0F16;
+      scroll-behavior: smooth;
+      overflow-x: hidden;
+    }
+
+    /* premium noise texture overlay (matte paper feel) */
+    .noise-subtle {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 9999;
+      opacity: 0.018;
+      mix-blend-mode: multiply;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 400 400' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+      background-repeat: repeat;
+      background-size: 260px;
+    }
+
+    /* container */
+    .container {
+      max-width: 1280px;
+      margin: 0 auto;
+      padding: 0 40px;
+    }
+
+    @media (max-width: 768px) {
+      .container {
+        padding: 0 24px;
+      }
+    }
+
+    /* typography */
+    h1, h2, h3 {
+      font-weight: 600;
+      letter-spacing: -0.02em;
+    }
+
+    .eyebrow {
+      text-transform: uppercase;
+      font-size: 12px;
+      letter-spacing: 0.12em;
+      font-weight: 600;
+      color: #9A8C6F;
+      background: rgba(212, 195, 163, 0.12);
+      display: inline-block;
+      padding: 5px 12px;
+      border-radius: 100px;
+      backdrop-filter: blur(4px);
+    }
+
+    /* buttons */
+    .btn-dark {
+      background: #0A0F16;
+      color: white;
+      border: none;
+      padding: 12px 28px;
+      border-radius: 40px;
+      font-weight: 500;
+      font-size: 0.95rem;
+      cursor: pointer;
+      transition: all 0.3s cubic-bezier(0.2, 0.9, 0.4, 1.1);
+      text-decoration: none;
+      display: inline-block;
+    }
+    .btn-dark:hover {
+      background: #262F3D;
+      transform: translateY(-2px);
+      box-shadow: 0 12px 20px -10px rgba(0,0,0,0.15);
+    }
+    .btn-outline-gold {
+      background: transparent;
+      border: 1px solid #D4C3A3;
+      color: #0A0F16;
+      padding: 12px 28px;
+      border-radius: 40px;
+      font-weight: 500;
+      transition: all 0.25s;
+      cursor: pointer;
+    }
+    .btn-outline-gold:hover {
+      background: rgba(212, 195, 163, 0.08);
+      border-color: #B89C6C;
+      transform: translateY(-1px);
+    }
+    .btn-ghost-light {
+      background: transparent;
+      border: none;
+      font-weight: 500;
+      color: #4A5A6E;
+      cursor: pointer;
+      transition: color 0.2s;
+    }
+    .btn-ghost-light:hover {
+      color: #D4C3A3;
+    }
+
+    /* glass card base */
+    .glass-card {
+      background: rgba(255,255,255,0.96);
+      backdrop-filter: blur(8px);
+      border: 1px solid rgba(212,195,163,0.25);
+      border-radius: 32px;
+      box-shadow: 0 20px 35px -12px rgba(0,0,0,0.02), 0 1px 2px rgba(0,0,0,0.02);
+      transition: all 0.35s ease;
+    }
+    .glass-card:hover {
+      border-color: rgba(212,195,163,0.7);
+      box-shadow: 0 24px 48px -12px rgba(212,195,163,0.12), 0 0 0 1px rgba(212,195,163,0.1);
+    }
+
+    /* nav */
+    .nav-premium {
+      backdrop-filter: blur(20px);
+      background: rgba(255,255,255,0.75);
+      border-bottom: 1px solid rgba(0,0,0,0.03);
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+    }
+    .nav-inner {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 20px 40px;
+      max-width: 1440px;
+      margin: 0 auto;
+    }
+    .logo {
+      font-size: 1.7rem;
+      font-weight: 600;
+      letter-spacing: -0.02em;
+      background: linear-gradient(135deg, #0A0F16 0%, #2D3A48 100%);
+      background-clip: text;
+      -webkit-background-clip: text;
+      color: transparent;
+    }
+    .nav-links {
+      display: flex;
+      gap: 2.2rem;
+      align-items: center;
+    }
+    .nav-links a {
+      text-decoration: none;
+      color: #1F2A3A;
+      font-weight: 500;
+      transition: color 0.2s;
+    }
+    .nav-links a:hover {
+      color: #D4C3A3;
+    }
+    @media (max-width: 780px) {
+      .nav-links { display: none; }
+      .mobile-menu { display: block; }
+    }
+    .mobile-menu { display: none; font-size: 28px; cursor: pointer; }
+
+    /* reveal animation */
+    .fade-up {
+      opacity: 0;
+      transform: translateY(30px);
+      transition: opacity 0.7s cubic-bezier(0.2, 0.9, 0.4, 1.1), transform 0.7s cubic-bezier(0.2, 0.9, 0.4, 1.1);
+    }
+    .fade-up.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* hero floating orbs */
+    .hero-orb {
+      position: absolute;
+      border-radius: 50%;
+      filter: blur(70px);
+      z-index: 0;
+      opacity: 0.5;
+    }
+    .gold-glow {
+      background: radial-gradient(circle, rgba(212,195,163,0.35) 0%, rgba(240,244,248,0.2) 80%);
+      width: 70vw;
+      height: 70vw;
+      top: -20%;
+      right: -20%;
+    }
+
+    /* metrics row */
+    .metric-divider {
+      width: 1px;
+      height: 40px;
+      background: rgba(212,195,163,0.4);
+    }
+
+    /* bento premium grid */
+    .bento-premium {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 28px;
+    }
+    .bento-item {
+      background: #FFFFFF;
+      border-radius: 36px;
+      border: 1px solid rgba(212,195,163,0.2);
+      padding: 32px;
+      transition: all 0.3s;
+    }
+    .bento-item:hover {
+      border-color: #D4C3A3;
+      box-shadow: 0 30px 50px -20px rgba(212,195,163,0.2);
+      transform: translateY(-4px);
+    }
+    .span-2 { grid-column: span 2; }
+    @media (max-width: 900px) {
+      .bento-premium { grid-template-columns: 1fr; }
+      .span-2 { grid-column: span 1; }
+    }
+
+    /* scroll story */
+    .scroll-story {
+      display: flex;
+      gap: 60px;
+      margin: 100px 0;
+    }
+    .story-sticky {
+      flex: 1;
+      position: sticky;
+      top: 120px;
+      align-self: start;
+    }
+    .story-cards {
+      flex: 1.5;
+      display: flex;
+      flex-direction: column;
+      gap: 60px;
+    }
+    .story-card {
+      background: #FFFFFF;
+      border-radius: 32px;
+      padding: 36px;
+      border: 1px solid rgba(212,195,163,0.2);
+    }
+    @media (max-width: 800px) {
+      .scroll-story { flex-direction: column; }
+      .story-sticky { position: relative; top: 0; margin-bottom: 20px; }
+    }
+    .step-active {
+      color: #0A0F16;
+      font-weight: 700;
+      border-left: 3px solid #D4C3A3;
+      padding-left: 16px;
+    }
+    .step-inactive {
+      color: #B0B9C4;
+    }
+
+    /* testimonial premium track */
+    .testi-track {
+      display: flex;
+      gap: 28px;
+      overflow-x: auto;
+      scroll-snap-type: x mandatory;
+      padding: 20px 4px 40px;
+      scrollbar-width: thin;
+    }
+    .testi-card {
+      flex: 0 0 400px;
+      background: #FCFCFD;
+      border-radius: 32px;
+      padding: 32px;
+      border: 1px solid rgba(212,195,163,0.2);
+      scroll-snap-align: start;
+      transition: all 0.3s;
+    }
+    @media (max-width: 760px) {
+      .testi-card { flex: 0 0 280px; }
+    }
+
+    /* dark trust section */
+    .trust-dark {
+      background: #0A0F16;
+      border-radius: 48px;
+      padding: 80px 48px;
+      color: white;
+    }
+    .gold-stat {
+      color: #D4C3A3;
+    }
+
+    footer a {
+      text-decoration: none;
+      color: #5B6E8C;
+      transition: all 0.2s;
+    }
+    footer a:hover {
+      color: #D4C3A3;
+      transform: translateX(4px);
+      display: inline-block;
+    }
+  </style>
+</head>
+<body>
+<div class="noise-subtle"></div>
+
+<nav class="nav-premium">
+  <div class="nav-inner">
+    <span class="logo">Kodo North</span>
+    <div class="nav-links">
+      <a href="#">Platform</a>
+      <a href="#">Intelligence</a>
+      <a href="#">Enterprises</a>
+      <a href="#">Insights</a>
+      <a href="#" class="btn-dark" style="padding: 8px 22px;">Request demo</a>
+    </div>
+    <div class="mobile-menu">☰</div>
+  </div>
+</nav>
+
+<main>
+  <!-- Hero -->
+  <section style="position: relative; overflow: hidden; padding: 80px 0 120px;">
+    <div class="hero-orb gold-glow"></div>
+    <div class="container" style="position: relative; z-index: 2; text-align: center;">
+      <div class="fade-up"><span class="eyebrow">Private beta · exclusive access</span></div>
+      <h1 class="fade-up" style="font-size: clamp(52px, 8vw, 88px); line-height: 1.05; margin: 28px 0 20px; font-weight: 600;">Convert idle liquidity<br>into <span style="color: #D4C3A3;">active returns</span>.</h1>
+      <p class="fade-up" style="font-size: 1.3rem; color: #5C6A7D; max-width: 640px; margin: 0 auto 32px;">Your cash is already working — just not hard enough. Kodo North reveals the invisible gap and automates yield optimization.</p>
+      <div class="fade-up" style="display: flex; gap: 20px; justify-content: center; flex-wrap: wrap;">
+        <button class="btn-dark">Take the drop test →</button>
+        <button class="btn-outline-gold">Explore platform</button>
+      </div>
+      <!-- floating assets -->
+      <div style="display: flex; justify-content: center; gap: 40px; margin-top: 80px; flex-wrap: wrap;">
+        <div class="glass-card" style="padding: 12px 24px; backdrop-filter: blur(12px);"><span style="font-weight:500;">₹48.7Cr idle identified</span> <span style="color:#D4C3A3;">+2.1% gap</span></div>
+        <div class="glass-card" style="padding: 12px 24px;"><span>Auto-sweep → 6.2% yield</span></div>
+        <div class="glass-card" style="padding: 12px 24px;"><span>14 hrs saved / month</span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Trust marquee + metrics (factual data) -->
+  <div class="container" style="margin: 20px auto 60px;">
+    <div style="text-align: center; margin-bottom: 32px;"><span class="eyebrow" style="background: none; color:#9A8C6F;">Trusted by vanguard enterprises</span></div>
+    <div style="display: flex; flex-wrap: wrap; justify-content: center; gap: 48px; margin-bottom: 48px; font-weight: 500; color: #1C2C3C;">
+      <span>✧ Razorpay</span> <span>✧ Unicorn</span> <span>✧ Groww</span> <span>✧ Zeta</span> <span>✧ Ola Electric</span> <span>✧ CRED</span>
+    </div>
+    <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 24px; border-top: 1px solid rgba(212,195,163,0.25); border-bottom: 1px solid rgba(212,195,163,0.25); padding: 32px 0;">
+      <div><strong style="font-size: 2.3rem;">60%</strong><div style="color:#6F7D91;">of company cash sits idle</div></div>
+      <div class="metric-divider"></div>
+      <div><strong style="font-size: 2.3rem;">1.8–2.4%</strong><div style="color:#6F7D91;">avg return gap</div></div>
+      <div class="metric-divider"></div>
+      <div><strong style="font-size: 2.3rem;">14 hrs</strong><div style="color:#6F7D91;">manual tracking monthly</div></div>
+    </div>
+  </div>
+
+  <!-- Bento grid: premium features -->
+  <div class="container" style="margin: 100px auto;">
+    <div class="fade-up" style="text-align: center; max-width: 700px; margin: 0 auto 56px;">
+      <span class="eyebrow">invisible inefficiency, revealed</span>
+      <h2 style="font-size: 2.8rem; margin-top: 16px;">Most treasury inefficiency is invisible.<br>We illuminate it.</h2>
+    </div>
+    <div class="bento-premium">
+      <div class="bento-item span-2 fade-up">
+        <div style="display: flex; gap:12px; align-items: center; margin-bottom: 20px;"><svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#D4C3A3" stroke-width="1.2"><path d="M3 6h18v12H3zM7 10h4v4H7zM13 10h4v4h-4z"/></svg><span style="font-weight: 600;">Cash position clarity</span></div>
+        <p>Understand how much cash sits across accounts, FDs, funds — all in one unified dashboard without manual reports.</p>
+        <div style="background: #F8FAFE; border-radius: 28px; padding: 20px; margin-top: 24px;"><div style="display: flex; justify-content: space-between;"><span>HDFC Sweep</span><span>₹22.4Cr</span></div><div style="display: flex; justify-content: space-between;"><span>Axis Liquid Fund</span><span>₹14.2Cr</span></div><div style="border-top: 1px solid #E2E8F0; margin: 14px 0 8px; font-weight: 600;">Total dry powder: ₹48.7Cr</div><div style="color:#D4C3A3;">inefficiency detected: +1.9% potential</div></div>
+      </div>
+      <div class="bento-item fade-up">
+        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#D4C3A3" stroke-width="1.2"><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/><circle cx="12" cy="12" r="3"/></svg>
+        <h3 style="margin: 20px 0 8px;">Yield gap diagnosis</h3>
+        <p>Automated analysis shows exactly where idle cash is underearning. Average gap 1.8–2.4%.</p>
+        <div style="margin-top: 20px;"><span style="background: #F0F4F8; padding:6px 12px; border-radius: 60px;">+₹12.6L annual opportunity</span></div>
+      </div>
+      <div class="bento-item fade-up">
+        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#D4C3A3" stroke-width="1.2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+        <h3 style="margin: 20px 0 8px;">Auto-sweep infrastructure</h3>
+        <p>Convert idle liquidity into active returns. Set rules, automate sweeps to high-yield vehicles.</p>
+        <div style="margin-top: 18px;"><span class="glass-card" style="display: inline-block; padding:6px 14px;">48bps uplift executed</span></div>
+      </div>
+      <div class="bento-item span-2 fade-up">
+        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#D4C3A3" stroke-width="1.2"><rect x="4" y="4" width="16" height="16" rx="2"/><path d="M8 12h8M12 8v8"/></svg>
+        <h3 style="margin: 20px 0 8px;">Bank-grade governance & controls</h3>
+        <p>Custom roles, approval workflows, and audit trails. SOC 2 Type II certified, enterprise ready.</p>
+        <div style="display: flex; gap: 28px; margin-top: 20px;"><span>✓ Multi-layer approval</span><span>✓ Segregation of duties</span><span>✓ Real-time alerts</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Scroll story: Diagnosis → Quantification → Action -->
+  <div class="container" style="margin: 120px auto;">
+    <div class="scroll-story">
+      <div class="story-sticky" id="storySticky">
+        <h2 style="font-size: 2.4rem; margin-bottom: 32px;">From passive holding to active yield.</h2>
+        <div id="stepMarker1" class="step-active" style="margin-bottom: 18px; font-size: 1.2rem;">01 · Diagnosis</div>
+        <div id="stepMarker2" class="step-inactive" style="margin-bottom: 18px; font-size: 1.2rem;">02 · Quantification</div>
+        <div id="stepMarker3" class="step-inactive" style="font-size: 1.2rem;">03 · Action</div>
+      </div>
+      <div class="story-cards" id="storyCards">
+        <div class="story-card" data-step="1">
+          <div style="color:#D4C3A3; margin-bottom: 12px;">✦ DIAGNOSIS</div>
+          <h3 style="font-size: 1.8rem;">See what your cash is actually doing.</h3>
+          <p style="margin: 16px 0; color:#3F4E67;">Most teams know cash is spread across accounts, FDs, funds — but no unified view. Kodo maps balances, instruments, and entities.</p>
+          <div style="background: #F9FBFE; border-radius: 24px; padding: 20px; margin-top: 8px;"><span>🔍 Fragmentation detected: 43% in low-yield current accounts</span></div>
+        </div>
+        <div class="story-card" data-step="2">
+          <div style="color:#D4C3A3; margin-bottom: 12px;">📊 QUANTIFICATION</div>
+          <h3 style="font-size: 1.8rem;">Measure what you may be leaving behind.</h3>
+          <p>Based on your cash base, yield gap, and review frequency. The average return gap sits between 1.8% and 2.4%.</p>
+          <div style="background: #F0F2F5; border-radius: 28px; padding: 20px; margin-top: 18px;"><span style="font-size: 2rem; font-weight: 600;">₹48 Lakhs</span> <span style="color:#2C3A4B;">estimated annual gain*</span></div>
+        </div>
+        <div class="story-card" data-step="3">
+          <div style="color:#D4C3A3; margin-bottom: 12px;">⚡ ACTION</div>
+          <h3 style="font-size: 1.8rem;">Know what to do next — and execute.</h3>
+          <p>Get operating recommendations: which terms to adjust, missed timing, banker relationships. One-click execution.</p>
+          <div style="display: flex; gap: 12px; margin-top: 24px;"><button class="btn-dark" style="padding: 10px 28px;">Approve reallocation</button><button class="btn-outline-gold">Review insights</button></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Why Kodo North (2x2) -->
+  <div class="container" style="margin: 80px auto;">
+    <div class="fade-up" style="text-align: center; max-width: 700px; margin: 0 auto 56px;">
+      <span class="eyebrow">Infrastructure, reimagined</span>
+      <h2 style="font-size: 2.5rem;">Built for CFOs who demand software<br>as fast as they do.</h2>
+    </div>
+    <div style="display: grid; grid-template-columns: repeat(2,1fr); gap: 48px;">
+      <div><span style="font-size: 44px; color:#D4C3A3;">⚡</span><h3 style="margin: 12px 0;">Founder-friendly</h3><p style="color:#4F5E74;">No long implementation. Connect your banks and see value in <strong>14 hours</strong>.</p></div>
+      <div><span style="font-size: 44px; color:#D4C3A3;">🏛️</span><h3 style="margin: 12px 0;">Enterprise reliability</h3><p>Uptime, accuracy, redundancy — built for public companies and high-growth firms.</p></div>
+      <div><span style="font-size: 44px; color:#D4C3A3;">🌊</span><h3 style="margin: 12px 0;">Continuous treasury rhythm</h3><p>Move from one-time review to real-time monitoring with automated alerts.</p></div>
+      <div><span style="font-size: 44px; color:#D4C3A3;">🔐</span><h3 style="margin: 12px 0;">Bank-grade security</h3><p>Encryption, custom RBAC, and SOC 2 Type II certification as standard.</p></div>
+    </div>
+  </div>
+
+  <!-- Dark trust + security section -->
+  <div class="container" style="margin: 100px auto;">
+    <div class="trust-dark">
+      <div style="text-align: center;"><span class="eyebrow" style="background: rgba(212,195,163,0.2);">Zero-trust architecture</span></div>
+      <h2 style="font-size: 2.4rem; text-align: center; margin: 24px 0 48px;">Enterprise security is our baseline, not a feature.</h2>
+      <div style="display: flex; justify-content: space-between; flex-wrap: wrap; gap: 32px; text-align: center;">
+        <div style="flex:1"><span style="font-size: 42px;">🔒</span><h3 class="gold-stat">SOC 2 Type II</h3><p style="color:#9CAFBF;">Annual third-party audit</p></div>
+        <div style="flex:1"><span style="font-size: 42px;">🔏</span><h3 class="gold-stat">End-to-end encryption</h3><p>AES-256 & TLS 1.3</p></div>
+        <div style="flex:1"><span style="font-size: 42px;">👥</span><h3 class="gold-stat">Custom role-based access</h3><p>Fine-grained controls</p></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Testimonials (carousel with subtle scaling) -->
+  <div class="container" style="margin: 80px auto;">
+    <div class="fade-up" style="text-align: center;"><span class="eyebrow">Trusted by the vanguard</span><h2 style="font-size: 2.4rem; margin-top: 16px;">What modern finance leaders say</h2></div>
+    <div class="testi-track" id="testiTrack">
+      <div class="testi-card"><p style="font-size: 1.2rem; line-height: 1.4;">“Kodo North didn’t just save us time; it revealed yield we didn’t know we were losing. 2.3% net improvement.”</p><div style="margin-top: 28px;"><strong>— Anjali Sharma</strong><br><span style="color:#5F728B;">CFO, Unicorn Ventures</span></div></div>
+      <div class="testi-card"><p style="font-size: 1.2rem;">“Real-time visibility across 12 banking partners. Finally, treasury that feels like modern software.”</p><div style="margin-top: 28px;"><strong>— Rohan Mehta</strong><br><span style="color:#5F728B;">Group Treasurer</span></div></div>
+      <div class="testi-card"><p style="font-size: 1.2rem;">“The auto-sweep engine alone paid for the platform in 4 months. Essential for high-growth.”</p><div style="margin-top: 28px;"><strong>— Priya K.</strong><br><span style="color:#5F728B;">Finance Director, EMERGE</span></div></div>
+      <div class="testi-card"><p style="font-size: 1.2rem;">“We cut monthly cash ops from 14 hours to 1 hour. Kodo is our single source of truth.”</p><div style="margin-top: 28px;"><strong>— Vikram Singh</strong><br><span style="color:#5F728B;">VP Finance</span></div></div>
+    </div>
+  </div>
+
+  <!-- Final CTA (luxury glass) -->
+  <div class="container" style="margin: 100px auto 60px;">
+    <div style="background: rgba(240,244,248,0.6); backdrop-filter: blur(4px); border-radius: 64px; padding: 80px 40px; text-align: center; border: 1px solid rgba(212,195,163,0.3);">
+      <h2 style="font-size: 2.8rem;">Step into the future of treasury.</h2>
+      <p style="font-size: 1.2rem; margin: 20px auto; max-width: 520px; color: #364453;">Join the exclusive cohort of high-performing enterprises optimizing liquidity with Kodo North.</p>
+      <div style="display: flex; justify-content: center; gap: 12px; flex-wrap: wrap; margin-top: 24px;">
+        <input type="email" placeholder="Your work email" style="background: white; border: 1px solid rgba(212,195,163,0.5); padding: 14px 24px; border-radius: 60px; width: 280px; outline: none;">
+        <button class="btn-dark">Request early access →</button>
+      </div>
+      <p style="margin-top: 28px; font-size: 0.8rem;">Priority onboarding for private beta members</p>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer class="container" style="padding: 48px 0 64px; border-top: 1px solid rgba(0,0,0,0.04);">
+    <div style="display: flex; justify-content: space-between; flex-wrap: wrap; gap: 48px;">
+      <div><span class="logo" style="font-size: 1.6rem;">Kodo North</span><div style="margin-top: 12px; color:#677A93;">Modern treasury infrastructure</div><div style="margin-top: 8px;">SOC 2 Type II · India</div></div>
+      <div style="display: flex; gap: 60px; flex-wrap: wrap;">
+        <div><strong>Platform</strong><br><a href="#">Intelligence</a><br><a href="#">Automation</a><br><a href="#">Security</a></div>
+        <div><strong>Company</strong><br><a href="#">About</a><br><a href="#">Careers</a><br><a href="#">Press</a></div>
+        <div><strong>Legal</strong><br><a href="#">Privacy</a><br><a href="#">Terms</a><br><a href="#">Compliance</a></div>
+      </div>
+    </div>
+    <div style="margin-top: 48px; text-align: center; font-size: 0.8rem; color:#8A9AB0;">© 2025 Kodo North — Made with ♥ in India. Silent treasury intelligence.</div>
+  </footer>
+</main>
+
+<script>
+  // reveal on scroll
+  const faders = document.querySelectorAll('.fade-up');
+  const obs = new IntersectionObserver((entries) => {
+    entries.forEach(e => { if(e.isIntersecting) e.target.classList.add('visible'); });
+  }, { threshold: 0.1, rootMargin: "0px 0px -20px 0px" });
+  faders.forEach(el => obs.observe(el));
+
+  // sticky story highlight
+  const storyCards = document.querySelectorAll('.story-card');
+  const step1 = document.getElementById('stepMarker1');
+  const step2 = document.getElementById('stepMarker2');
+  const step3 = document.getElementById('stepMarker3');
+  function updateSteps() {
+    let active = 1;
+    storyCards.forEach(card => {
+      const rect = card.getBoundingClientRect();
+      if (rect.top < 250 && rect.bottom > 150) {
+        active = parseInt(card.getAttribute('data-step'));
+      }
+    });
+    [step1, step2, step3].forEach((el, idx) => {
+      if (idx+1 === active) {
+        el.classList.add('step-active');
+        el.classList.remove('step-inactive');
+      } else {
+        el.classList.add('step-inactive');
+        el.classList.remove('step-active');
+      }
+    });
+  }
+  window.addEventListener('scroll', updateSteps);
+  updateSteps();
+
+  // testimonial center scaling effect (luxury touch)
+  const trackEl = document.getElementById('testiTrack');
+  const updateScale = () => {
+    const cards = document.querySelectorAll('.testi-card');
+    const trackRect = trackEl.getBoundingClientRect();
+    const center = trackRect.left + trackRect.width/2;
+    cards.forEach(card => {
+      const rect = card.getBoundingClientRect();
+      const cardCenter = rect.left + rect.width/2;
+      const distance = Math.abs(cardCenter - center);
+      const max = trackRect.width/2.2;
+      let scale = 1, opacity = 1;
+      if (distance > max) { scale = 0.92; opacity = 0.65; }
+      else { const factor = distance/max; scale = 1 - factor*0.08; opacity = 1 - factor*0.3; }
+      card.style.transform = `scale(${scale})`;
+      card.style.opacity = opacity;
+    });
+  };
+  trackEl.addEventListener('scroll', updateScale);
+  window.addEventListener('resize', updateScale);
+  updateScale();
+
+  // mobile menu placeholder
+  document.querySelector('.mobile-menu')?.addEventListener('click', () => alert('Full navigation — Kodo North: premium treasury platform.'));
+</script>
+</body>
+</html>
